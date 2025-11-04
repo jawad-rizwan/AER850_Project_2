@@ -13,14 +13,17 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0' 
 
 # Import necessary libraries
+import time
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import time
+import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras import models, layers
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+from tensorflow.keras.optimizers import Adam 
+from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau  
 
 ##########################################################
 # STEP 1: Data Processing
@@ -72,13 +75,16 @@ print("\nSetting up data augmentation...")
 
 # Training data generator with augmentation
 train_datagen = ImageDataGenerator(
-    rescale=1./255,           # Normalize pixel values to [0,1]
-    shear_range=0.2,          # Shear transformation
-    zoom_range=0.2,           # Random zoom
-    horizontal_flip=True,     # Random horizontal flip
-    rotation_range=20,        # Random rotation
-    width_shift_range=0.2,    # Random horizontal shift
-    height_shift_range=0.2    # Random vertical shift
+    rescale=1./255,
+    shear_range=0.25,          # Increased from 0.2
+    zoom_range=0.25,           # Increased from 0.2
+    horizontal_flip=True,
+    vertical_flip=True,        # NEW - add vertical flips
+    rotation_range=30,         # Increased from 20
+    width_shift_range=0.25,    # Increased from 0.2
+    height_shift_range=0.25,   # Increased from 0.2
+    brightness_range=[0.85, 1.15],  # NEW - brightness variation
+    fill_mode='nearest'
 )
 
 # Validation data generator (only rescaling, no augmentation)
@@ -87,7 +93,7 @@ validation_datagen = ImageDataGenerator(
 )
 
 print("Data augmentation configured")
-print("  - Training: rescaling, shear, zoom, flip, rotation, shifts")
+print("  - Training: rescaling, shear, zoom, flips, rotation, shifts, brightness")
 print("  - Validation: rescaling only")
 
 # 4. Create data generators
@@ -179,14 +185,18 @@ model.add(Conv2D(filters=128, kernel_size=(3, 3), activation='relu', name='conv3
 model.add(MaxPooling2D(pool_size=(2, 2), name='pool3'))
 print("✓ Block 3: 128 filters, 3x3 kernel")
 
-# Fourth Convolutional Block (optional, for better feature extraction)
+# Fourth Convolutional Block
 model.add(Conv2D(filters=128, kernel_size=(3, 3), activation='relu', name='conv4'))
 model.add(MaxPooling2D(pool_size=(2, 2), name='pool4'))
 print("✓ Block 4: 128 filters, 3x3 kernel")
 
+# Fifth Convolutional Block (NEW - ADDED FOR IMPROVEMENT)
+model.add(Conv2D(filters=256, kernel_size=(3, 3), activation='relu', name='conv5'))
+model.add(MaxPooling2D(pool_size=(2, 2), name='pool5'))
+print("✓ Block 5: 256 filters, 3x3 kernel")
+
 # Flatten layer - convert 2D feature maps to 1D
 model.add(Flatten(name='flatten'))
-print("✓ Flatten layer added")
 
 # Fully Connected (Dense) Layers
 model.add(Dense(256, activation='relu', name='dense1'))
@@ -224,10 +234,13 @@ print("  - Loss function: categorical_crossentropy")
 print("  - Optimizer: adam")
 print("  - Metrics: accuracy")
 
+# Use custom optimizer with optimized learning rate
+optimizer = Adam(learning_rate=0.0005)  # Lower learning rate
+
 model.compile(
-    loss='categorical_crossentropy',  # For multi-class classification
-    optimizer='adam',                  # Adaptive learning rate optimizer
-    metrics=['accuracy']               # Track accuracy during training
+    loss='categorical_crossentropy',
+    optimizer=optimizer,  # Use custom optimizer instead of 'adam'
+    metrics=['accuracy']
 )
 
 print("✓ Model compiled successfully")
@@ -238,7 +251,7 @@ print("HYPERPARAMETERS SUMMARY")
 print("="*60)
 print("Convolutional Layers:")
 print("  - Activation: ReLU")
-print("  - Filters: 32 → 64 → 128 → 128")
+print("  - Filters: 32 → 64 → 128 → 128 → 256")  # Updated
 print("  - Kernel size: 3x3")
 print("  - Pooling: MaxPooling 2x2")
 print("\nDense Layers:")
@@ -248,8 +261,10 @@ print("  - Neurons: 256 → 128 → 3")
 print("  - Dropout rate: 0.5")
 print("\nTraining Parameters:")
 print(f"  - Loss function: categorical_crossentropy")
-print(f"  - Optimizer: adam")
+print(f"  - Optimizer: adam (learning_rate=0.0005)")  # Updated
 print(f"  - Batch size: {BATCH_SIZE}")
+print(f"  - Max epochs: {EPOCHS}")
+print(f"  - Early stopping: patience=8")
 print(f"  - Image size: {IMG_HEIGHT}x{IMG_WIDTH}x{IMG_CHANNELS}")
 print("="*60)
 
@@ -265,7 +280,27 @@ print("STEP 4: MODEL TRAINING & EVALUATION")
 print("="*60)
 
 # Set training parameters
-EPOCHS = 20  # Start with 20 epochs, can adjust based on results
+EPOCHS = 30  # Increased, but early stopping will stop sooner if needed
+
+# Add callbacks for smarter training
+print("\nSetting up training callbacks...")
+callbacks = [
+    EarlyStopping(
+        monitor='val_accuracy',
+        patience=8,
+        restore_best_weights=True,
+        verbose=1
+    ),
+    ReduceLROnPlateau(
+        monitor='val_loss',
+        factor=0.5,
+        patience=4,
+        min_lr=1e-7,
+        verbose=1
+    )
+]
+print("✓ Early stopping: patience=8 epochs")
+print("✓ Learning rate reduction: factor=0.5, patience=4")
 
 print(f"\nTraining configuration:")
 print(f"  - Epochs: {EPOCHS}")
@@ -281,11 +316,11 @@ print("="*60 + "\n")
 start_time = time.time()
 print(f"Training started at: {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
 
-# Train the model
 history = model.fit(
     train_generator,
     epochs=EPOCHS,
     validation_data=validation_generator,
+    callbacks=callbacks,  
     verbose=1
 )
 
