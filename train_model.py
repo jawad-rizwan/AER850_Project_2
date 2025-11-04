@@ -1,5 +1,5 @@
 # =============================================================
-# AER 850 Project 2: Aircraft Defect Classification System
+# AER 850 Project 2: Aircraft Defect Classification System (Steps 1-4)
 # Name: Jawad Rizwan
 # Student Number: 501124033
 # Due Date: November 5th, 2025
@@ -274,7 +274,7 @@ print(f"  - Validation steps: {validation_generator.n // BATCH_SIZE}")
 
 print("\n" + "="*60)
 print("Starting model training...")
-print("This may take several minutes depending on your hardware.")
+print("This will take a while. Please wait...")
 print("="*60 + "\n")
 
 # Start timing
@@ -317,7 +317,7 @@ print(f"✓ Model saved to: {model_save_path}")
 # ============================================================================
 
 print("\n" + "="*60)
-print("GENERATING PERFORMANCE PLOTS")
+print("GENERATING PERFORMANCE PLOTS...")
 print("="*60)
 
 # Create output directory
@@ -383,9 +383,4 @@ print("="*60)
 
 print("\n" + "="*60)
 print("TRAINING PIPELINE COMPLETE!")
-print("="*60)
-print("\nNext steps:")
-print("1. Review the performance plot: outputs/model_performance.png")
-print("2. Check model file: models/aircraft_defect_model.h5")
-print("3. Run test_model.py for Step 5 (testing on new images)")
 print("="*60)

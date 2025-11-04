@@ -1,7 +1,11 @@
-"""
-AER850 Project 2: Step 5 - Model Testing
-Testing the trained model on new images
-"""
+# =============================================================
+# AER 850 Project 2: Aircraft Defect Classification System (Step 5)
+# Name: Jawad Rizwan
+# Student Number: 501124033
+# Due Date: November 5th, 2025
+# -------------------------------------------------------------
+# This script 
+# =============================================================
 
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
