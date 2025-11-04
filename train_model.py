@@ -16,6 +16,7 @@ os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import time
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras import models, layers
 from tensorflow.keras.models import Sequential
@@ -52,7 +53,7 @@ if not os.path.exists(TRAIN_DIR):
     print(f"ERROR: {TRAIN_DIR} not found!")
     exit(1)
 else:
-    print(f"✓ Train directory found: {TRAIN_DIR}")
+    print(f"Train directory found: {TRAIN_DIR}")
     
 if not os.path.exists(VALIDATION_DIR):
     print(f"ERROR: {VALIDATION_DIR} not found!")
@@ -85,7 +86,7 @@ validation_datagen = ImageDataGenerator(
     rescale=1./255
 )
 
-print("✓ Data augmentation configured")
+print("Data augmentation configured")
 print("  - Training: rescaling, shear, zoom, flip, rotation, shifts")
 print("  - Validation: rescaling only")
 
@@ -101,9 +102,9 @@ try:
         shuffle=True,
         seed=42
     )
-    print(f"✓ Training generator created: {train_generator.n} images found")
+    print(f"Training generator created: {train_generator.n} images found")
 except Exception as e:
-    print(f"❌ ERROR creating training generator: {e}")
+    print(f"ERROR creating training generator: {e}")
     exit(1)
 
 try:
@@ -117,7 +118,7 @@ try:
     )
     print(f"✓ Validation generator created: {validation_generator.n} images found")
 except Exception as e:
-    print(f"❌ ERROR creating validation generator: {e}")
+    print(f"ERROR creating validation generator: {e}")
     exit(1)
 
 # Print information about the data
@@ -137,14 +138,14 @@ expected_train = 1942
 expected_val = 431
 
 if train_generator.n == expected_train:
-    print(f"✓ Training samples match expected: {expected_train}")
+    print(f"Training samples match expected: {expected_train}")
 else:
-    print(f"⚠️  Training samples ({train_generator.n}) don't match expected ({expected_train})")
+    print(f"Training samples ({train_generator.n}) don't match expected ({expected_train})")
 
 if validation_generator.n == expected_val:
-    print(f"✓ Validation samples match expected: {expected_val}")
+    print(f"Validation samples match expected: {expected_val}")
 else:
-    print(f"⚠️  Validation samples ({validation_generator.n}) don't match expected ({expected_val})")
+    print(f"Validation samples ({validation_generator.n}) don't match expected ({expected_val})")
 
 print("\n✓ STEP 1 COMPLETE: Data processing ready!")
 print("="*60)
@@ -276,6 +277,10 @@ print("Starting model training...")
 print("This may take several minutes depending on your hardware.")
 print("="*60 + "\n")
 
+# Start timing
+start_time = time.time()
+print(f"Training started at: {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
+
 # Train the model
 history = model.fit(
     train_generator,
@@ -284,12 +289,25 @@ history = model.fit(
     verbose=1
 )
 
+# End timing
+end_time = time.time()
+total_time = end_time - start_time
+
+# Convert to hours, minutes, seconds
+hours = int(total_time // 3600)
+minutes = int((total_time % 3600) // 60)
+seconds = int(total_time % 60)
+
 print("\n" + "="*60)
 print("✓ Training complete!")
 print("="*60)
+print(f"Training ended at: {time.strftime('%Y-%m-%d %H:%M:%S')}")
+print(f"Total training time: {hours}h {minutes}m {seconds}s ({total_time:.2f} seconds)")
+print(f"Average time per epoch: {total_time/EPOCHS:.2f} seconds")
+print("="*60)
 
 # Save the trained model
-model_save_path = 'models/aircraft_defect_model.h5'
+model_save_path = 'models/aircraft_defect_model.keras'
 os.makedirs('models', exist_ok=True)
 model.save(model_save_path)
 print(f"✓ Model saved to: {model_save_path}")
@@ -351,7 +369,7 @@ print("="*60)
 
 # Check for overfitting
 if final_train_acc - final_val_acc > 0.15:
-    print("\n⚠️  WARNING: Possible overfitting detected!")
+    print("\n WARNING: Possible overfitting detected!")
     print("   Training accuracy significantly higher than validation accuracy.")
     print("   Consider: increasing dropout, adding more data augmentation,")
     print("   or reducing model complexity.")
