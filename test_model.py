@@ -24,7 +24,7 @@ print("STEP 5: MODEL TESTING")
 print("="*60)
 
 # Load the trained model
-MODEL_PATH = 'models/aircraft_defect_model.h5'  # or .h5 if you used that
+MODEL_PATH = 'models/aircraft_defect_model.keras'  # or .h5 
 print(f"\nLoading trained model from: {MODEL_PATH}")
 
 try:

@@ -76,14 +76,12 @@ print("\nSetting up data augmentation...")
 # Training data generator with augmentation
 train_datagen = ImageDataGenerator(
     rescale=1./255,
-    shear_range=0.25,          # Increased from 0.2
-    zoom_range=0.25,           # Increased from 0.2
-    horizontal_flip=True,
-    vertical_flip=True,        # NEW - add vertical flips
-    rotation_range=30,         # Increased from 20
-    width_shift_range=0.25,    # Increased from 0.2
-    height_shift_range=0.25,   # Increased from 0.2
-    brightness_range=[0.85, 1.15],  # NEW - brightness variation
+    shear_range=0.1,          
+    zoom_range=0.1,           
+    horizontal_flip=True,      
+    rotation_range=10,         
+    width_shift_range=0.2,    
+    height_shift_range=0.2,   
     fill_mode='nearest'
 )
 
@@ -263,7 +261,6 @@ print("\nTraining Parameters:")
 print(f"  - Loss function: categorical_crossentropy")
 print(f"  - Optimizer: adam (learning_rate=0.0005)")  # Updated
 print(f"  - Batch size: {BATCH_SIZE}")
-print(f"  - Max epochs: {EPOCHS}")
 print(f"  - Early stopping: patience=8")
 print(f"  - Image size: {IMG_HEIGHT}x{IMG_WIDTH}x{IMG_CHANNELS}")
 print("="*60)
