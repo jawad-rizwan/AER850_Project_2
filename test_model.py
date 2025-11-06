@@ -4,9 +4,19 @@
 # Student Number: 501124033
 # Due Date: November 5th, 2025
 # -------------------------------------------------------------
-# This script 
+# This script loads the trained CNN model and tests it on three specific defect images,
+# generating predictions with confidence scores and visualization outputs.
+# 
+# Inputs:
+#     - Trained model: models/aircraft_defect_model.keras
+#     - Test images: Data/test/[defect-type]/test_[defect].jpg
+# 
+# Outputs:
+#     - Prediction visualizations: outputs/test_result_[defect-type].png
+#     - Test accuracy metrics printed to console
 # =============================================================
 
+# Import os and suppress TensorFlow warnings 
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 

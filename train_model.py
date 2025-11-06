@@ -4,7 +4,16 @@
 # Student Number: 501124033
 # Due Date: November 5th, 2025
 # -------------------------------------------------------------
-# This script 
+# This script implements a Deep Convolutional Neural Network (DCNN) to classify
+# aircraft surface defects into three categories: crack, missing-head, and paint-off.
+# 
+# Inputs:
+#     - Training images: Data/train/ (1,942 images)
+#     - Validation images: Data/valid/ (431 images)
+# 
+# Outputs:
+#     - Trained model: models/aircraft_defect_model.keras
+#     - Performance plots: outputs/model_performance.png
 # =============================================================
 
 # Import os and suppress TensorFlow warnings 
