@@ -45,17 +45,17 @@ except Exception as e:
     print("Make sure you've trained the model first (run train_model.py)")
     exit(1)
 
-# Define class labels (must match training order)
+# Define class labels 
 class_labels = ['crack', 'missing-head', 'paint-off']
 
-# Define test image paths (as specified in project)
+# Define test image paths
 test_images = {
     'crack': 'Data/test/crack/test_crack.jpg',
     'missing-head': 'Data/test/missing-head/test_missinghead.jpg',
     'paint-off': 'Data/test/paint-off/test_paintoff.jpg'
 }
 
-# Image parameters (must match training)
+# Image parameters 
 IMG_HEIGHT = 500
 IMG_WIDTH = 500
 

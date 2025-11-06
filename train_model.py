@@ -207,7 +207,7 @@ model.add(Flatten(name='flatten'))
 
 # Fully Connected (Dense) Layers
 model.add(Dense(256, activation='relu', name='dense1'))
-model.add(Dropout(0.5, name='dropout1'))  # Dropout to prevent overfitting
+model.add(Dropout(0.5, name='dropout1'))  
 print("✓ Dense layer 1: 256 neurons with dropout (0.5)")
 
 model.add(Dense(128, activation='relu', name='dense2'))
@@ -242,11 +242,11 @@ print("  - Optimizer: adam")
 print("  - Metrics: accuracy")
 
 # Use custom optimizer with optimized learning rate
-optimizer = Adam(learning_rate=0.0005)  # Lower learning rate
+optimizer = Adam(learning_rate=0.0005)  
 
 model.compile(
     loss='categorical_crossentropy',
-    optimizer=optimizer,  # Use custom optimizer instead of 'adam'
+    optimizer=optimizer,  
     metrics=['accuracy']
 )
 
@@ -258,7 +258,7 @@ print("HYPERPARAMETERS SUMMARY")
 print("="*60)
 print("Convolutional Layers:")
 print("  - Activation: ReLU")
-print("  - Filters: 32 → 64 → 128 → 128 → 256")  # Updated
+print("  - Filters: 32 → 64 → 128 → 128 → 256")  
 print("  - Kernel size: 3x3")
 print("  - Pooling: MaxPooling 2x2")
 print("\nDense Layers:")
@@ -268,7 +268,7 @@ print("  - Neurons: 256 → 128 → 3")
 print("  - Dropout rate: 0.5")
 print("\nTraining Parameters:")
 print(f"  - Loss function: categorical_crossentropy")
-print(f"  - Optimizer: adam (learning_rate=0.0005)")  # Updated
+print(f"  - Optimizer: adam (learning_rate=0.0005)")  
 print(f"  - Batch size: {BATCH_SIZE}")
 print(f"  - Early stopping: patience=8")
 print(f"  - Image size: {IMG_HEIGHT}x{IMG_WIDTH}x{IMG_CHANNELS}")
@@ -286,7 +286,7 @@ print("STEP 4: MODEL TRAINING & EVALUATION")
 print("="*60)
 
 # Set training parameters
-EPOCHS = 30  # Increased, but early stopping will stop sooner if needed
+EPOCHS = 30  
 
 # Add callbacks for smarter training
 print("\nSetting up training callbacks...")
